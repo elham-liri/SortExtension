@@ -1,4 +1,5 @@
 ﻿using SortHelper.Attributes;
+using SortHelper.Enums;
 
 namespace SortExtensionTest.DefaultSortPropertyExample
 {

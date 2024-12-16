@@ -9,6 +9,6 @@ var sortedList = defaultSorter.SortTasksByDefault();
 
 foreach (var taskModel in sortedList)
 {
-    Console.WriteLine($"{taskModel.Title} Created on {taskModel.CreateDate.ToShortDateString()}");
+    Console.WriteLine($"On {taskModel.CreateDate.ToShortDateString()} a task called {taskModel.Title} was created ");
 }
 

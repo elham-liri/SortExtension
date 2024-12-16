@@ -14,7 +14,7 @@ namespace SortExtensionTest.DefaultSortPropertyExample
         public List<TaskModel> SortTasksByDefault()
         {
             var tasks = GetCollection();
-            return tasks.ToList(); //.OrderBy("", SortDirection.Ascending).ToList();
+            return tasks.OrderBy().ToList();
         }
 
         private IQueryable<TaskModel> GetCollection()
@@ -29,7 +29,7 @@ namespace SortExtensionTest.DefaultSortPropertyExample
         private string FilesPath()
         {
             var appPath = Directory.GetCurrentDirectory();
-            appPath = appPath.Remove(appPath.IndexOf("bin"));
+            appPath = appPath.Remove(appPath.IndexOf("bin")-1);
 
             return $@"{appPath}\Files\";
         }
