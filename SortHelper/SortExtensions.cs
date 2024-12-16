@@ -1,47 +1,47 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Linq;
-using SortHelper.Attributes;
 using SortHelper.Enums;
 
 namespace SortHelper
 {
-    public static  class SortExtensions
+    public static class SortExtensions
     {
         /// <summary>
-        /// Add Sort Expression To A Query
+        /// Sort A collection by a Default sort property and a default sort direction
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="source">collection to be sorted</param>
-        /// <param name="sortProperty">property to sort by - should be camelCase</param>
-        /// <param name="sortDirection">direction of sort</param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"></exception>
-        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty, SortDirection sortDirection)
-        where T : class
+        /// <typeparam name="T">type of collection's objects</typeparam>
+        /// <param name="source">the collection</param>
+        /// <returns>sorted collection</returns>
+        /// <exception cref="ArgumentException">thrown exception</exception>
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source) where T : class
         {
-            if (source == null)
+            string sortProperty=string.Empty;
+            SortDirection? sortDirection=null;
+
+            var tType = typeof(T);
+
+            if (tType.HasDefaultSortProperty())
             {
-                throw new ArgumentNullException(nameof(source), "source is null.");
+                sortProperty = tType.GetDefaultSortProperty();
+                sortDirection = tType.GetDefaultSortDirection();
             }
 
-            sortProperty = sortProperty.GetSortProperty<T>();
-
-            if (string.IsNullOrWhiteSpace(sortProperty))
+            var validationError = source.ValidationBeforeSort(sortProperty, sortDirection);
+            if (!string.IsNullOrWhiteSpace(validationError))
             {
-                throw new ArgumentException("sortExpression is null or empty.", nameof(sortProperty));
+                throw new ArgumentException(validationError);
             }
 
+            return source.OrderBy(sortProperty, sortDirection.Value);
+        }
 
-            var isDescending = sortDirection == SortDirection.Descending;
+        private static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,
+            SortDirection sortDirection)
+            where T : class
+        {
             var tType = typeof(T);
             var prop = tType.GetProperty(sortProperty.FirstCharToUpper());
-
-            if (prop == null)
-            {
-                throw new ArgumentException($"No property '{sortProperty}' on type '{tType.Name}'");
-            }
 
             var funcType = typeof(Func<,>)
                 .MakeGenericType(tType, prop.PropertyType);
@@ -60,7 +60,7 @@ namespace SortHelper
             var sortPro = typeof(Queryable)
                 .GetMethods()
                 .FirstOrDefault(
-                    x => x.Name == (isDescending ? "OrderByDescending" : "OrderBy") &&
+                    x => x.Name == (sortDirection == SortDirection.Descending ? "OrderByDescending" : "OrderBy") &&
                          x.GetParameters().Length == 2);
             if (sortPro != null)
             {
@@ -70,20 +70,8 @@ namespace SortHelper
                 return (IQueryable<T>)sorter
                     .Invoke(null, new[] { source, sortLambda });
             }
+
             return source;
-        }
-
-
-        private static string GetSortProperty<T>(this string sortProperty) where T : class
-        {
-            if(!string.IsNullOrEmpty(sortProperty)) return sortProperty;
-
-            if (typeof(T).HasAttribute<DefaultSortProperty>())
-            {
-                sortProperty = AttributeExtensions.GetPropertyByAttribute<T, DefaultSortProperty>();
-            }
-
-            return sortProperty;
         }
 
         private static string FirstCharToUpper(this string input)
@@ -93,5 +81,29 @@ namespace SortHelper
             return input.First().ToString().ToUpper() + string.Join("", input.Skip(1));
         }
 
+        private static string ValidationBeforeSort<T>(this IQueryable<T> source, string sortProperty,
+            SortDirection? sortDirection)
+        {
+            if (source == null)
+                return "source collection is null.";
+
+            if (string.IsNullOrWhiteSpace(sortProperty) && !sortDirection.HasValue)
+                return "sortProperty and SortDirection are not provided";
+
+            if (string.IsNullOrWhiteSpace(sortProperty))
+                return "sortProperty is not provided";
+
+            if (!sortDirection.HasValue)
+                return "SortDirection is not provided";
+
+            var tType = typeof(T);
+            var prop = tType.GetProperty(sortProperty.FirstCharToUpper());
+
+            if (prop == null)
+                return $"No property '{sortProperty}' on type '{tType.Name}'";
+
+
+            return string.Empty;
+        }
     }
 }
