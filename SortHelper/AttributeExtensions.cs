@@ -6,19 +6,19 @@ using SortHelper.Enums;
 
 namespace SortHelper
 {
-    public static class AttributeExtensions
+    internal static class AttributeExtensions
     {
-        public static bool HasDefaultSortProperty(this Type type)
+        internal static bool HasDefaultSortProperty(this Type type)
         {
             return type.HasAttribute<DefaultSortProperty>();
         }
 
-        public static string GetDefaultSortProperty(this Type type)
+        internal static string GetDefaultSortProperty(this Type type)
         {
             return type.GetPropertyByAttribute<DefaultSortProperty>()?.Name;
         }
 
-        public static SortDirection? GetDefaultSortDirection(this Type type)
+        internal static SortDirection? GetDefaultSortDirection(this Type type)
         {
             var property = type.GetPropertyByAttribute<DefaultSortProperty>();
             var attribute

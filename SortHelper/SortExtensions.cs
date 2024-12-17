@@ -33,10 +33,45 @@ namespace SortHelper
                 throw new ArgumentException(validationError);
             }
 
-            return source.OrderBy(sortProperty, sortDirection.Value);
+            return source.Sort(sortProperty, sortDirection.Value);
         }
 
-        private static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,
+        /// <summary>
+        /// Sort A collection by a Default sort property and a given sort direction
+        /// </summary>
+        /// <typeparam name="T">type of collection's objects</typeparam>
+        /// <param name="source">the collection</param>
+        /// <param name="sortDirection">direction of sort</param>
+        /// <returns>sorted collection</returns>
+        /// <exception cref="ArgumentException">thrown exception</exception>
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, SortDirection sortDirection)
+            where T : class
+        {
+            string sortProperty = string.Empty;
+
+            var tType = typeof(T);
+
+            if (tType.HasDefaultSortProperty())
+            {
+                sortProperty = tType.GetDefaultSortProperty();
+            }
+
+            var validationError = source.ValidationBeforeSort(sortProperty, sortDirection);
+            if (!string.IsNullOrWhiteSpace(validationError))
+            {
+                throw new ArgumentException(validationError);
+            }
+
+            return source.Sort(sortProperty, sortDirection);
+        }
+
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,
+            SortDirection sortDirection)
+        {
+            return source;
+        }
+
+        private static IQueryable<T> Sort<T>(this IQueryable<T> source, string sortProperty,
             SortDirection sortDirection)
             where T : class
         {
