@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Reflection;
 using SortHelper.Enums;
 
 namespace SortHelper
@@ -16,8 +17,8 @@ namespace SortHelper
         /// <exception cref="ArgumentException">thrown exception</exception>
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> source) where T : class
         {
-            string sortProperty=string.Empty;
-            SortDirection? sortDirection=null;
+            string sortProperty = string.Empty;
+            SortDirection? sortDirection = null;
 
             var tType = typeof(T);
 
@@ -66,17 +67,24 @@ namespace SortHelper
         }
 
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,
-            SortDirection sortDirection)
+            SortDirection sortDirection) where T : class
         {
-            return source;
+            var validationError = source.ValidationBeforeSort(sortProperty, sortDirection);
+            if (!string.IsNullOrWhiteSpace(validationError))
+            {
+                throw new ArgumentException(validationError);
+            }
+
+            return source.Sort(sortProperty, sortDirection);
         }
+
 
         private static IQueryable<T> Sort<T>(this IQueryable<T> source, string sortProperty,
             SortDirection sortDirection)
             where T : class
         {
             var tType = typeof(T);
-            var prop = tType.GetProperty(sortProperty.FirstCharToUpper());
+            var prop = tType.GetSortPropertyInfo(sortProperty);
 
             var funcType = typeof(Func<,>)
                 .MakeGenericType(tType, prop.PropertyType);
@@ -109,6 +117,32 @@ namespace SortHelper
             return source;
         }
 
+        private static PropertyInfo GetSortPropertyInfo(this Type type, string sortProperty)
+        {
+            if (string.IsNullOrWhiteSpace(sortProperty) && type.HasDefaultSortProperty())
+            {
+                sortProperty = type.GetDefaultSortProperty();
+            }
+
+            if (string.IsNullOrWhiteSpace(sortProperty)) return null;
+
+            var prop = type.GetProperty(sortProperty.FirstCharToUpper());
+
+            if (prop == null)
+            {
+                sortProperty = type.GetAliasSortProperty(sortProperty);
+                if (!string.IsNullOrWhiteSpace(sortProperty))
+                    prop = type.GetProperty(sortProperty.FirstCharToUpper());
+            }
+            else if(prop.HasAlternativeSortProperty())
+            {
+                sortProperty=prop.GetAlternativeSortProperty();
+                prop = type.GetProperty(sortProperty.FirstCharToUpper());
+            }
+
+            return prop;
+        }
+
         private static string FirstCharToUpper(this string input)
         {
             if (string.IsNullOrEmpty(input))
@@ -132,13 +166,11 @@ namespace SortHelper
                 return "SortDirection is not provided";
 
             var tType = typeof(T);
-            var prop = tType.GetProperty(sortProperty.FirstCharToUpper());
+            var prop = tType.GetSortPropertyInfo(sortProperty);
 
-            if (prop == null)
-                return $"No property '{sortProperty}' on type '{tType.Name}'";
-
-
-            return string.Empty;
+            return prop == null 
+                ? $"No property '{sortProperty}' on type '{tType.Name}'" 
+                : string.Empty;
         }
     }
 }
