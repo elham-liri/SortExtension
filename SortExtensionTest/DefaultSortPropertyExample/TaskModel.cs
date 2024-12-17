@@ -1,19 +1,19 @@
 ﻿using SortHelper.Attributes;
-using SortHelper.Enums;
 
 namespace SortExtensionTest.DefaultSortPropertyExample
 {
-    public class TaskModel
+    public class TaskModel:ITaskModel
     {
         public int Id { get; set; }
         public string? Title { get; set; }
-
         [DefaultSortProperty]
         public DateTime CreateDate { get; set; }
-
         public int AssignedToUserId { get; set; }
-
         public DateTime DueDate { get; set; }
 
+        public override string ToString()
+        {
+            return $"On {CreateDate.ToShortDateString()} a task called {Title} was created ";
+        }
     }
 }

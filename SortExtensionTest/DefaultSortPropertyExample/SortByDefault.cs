@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using SortHelper;
 using SortHelper.Enums;
 
@@ -15,6 +10,12 @@ namespace SortExtensionTest.DefaultSortPropertyExample
         {
             var tasks = GetCollection();
             return tasks.OrderBy().ToList();
+        }
+
+        public List<TaskModel> SortTasksByDefault(SortDirection sortDirection)
+        {
+            var tasks = GetCollection();
+            return tasks.OrderBy(sortDirection).ToList();
         }
 
         private IQueryable<TaskModel> GetCollection()
@@ -29,7 +30,7 @@ namespace SortExtensionTest.DefaultSortPropertyExample
         private string FilesPath()
         {
             var appPath = Directory.GetCurrentDirectory();
-            appPath = appPath.Remove(appPath.IndexOf("bin")-1);
+            appPath = appPath.Remove(appPath.IndexOf("bin") - 1);
 
             return $@"{appPath}\Files\";
         }
