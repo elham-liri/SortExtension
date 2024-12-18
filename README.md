@@ -42,7 +42,7 @@ IQueryable<T> OrderBy<T>(this IQueryable<T> source, SortDirection sortDirection)
  var orderedCollection=collection.OrderBy(sortDirection).ToList();
  ```
 
- 2. Order by default sort property and default sort direction
+ 3. Order by default sort property and default sort direction
 ```
 IQueryable<T> OrderBy<T>(this IQueryable<T> source)where T : class
 ```
