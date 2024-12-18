@@ -2,7 +2,7 @@
 
 namespace SortExtensionTest.DefaultSortPropertyExample
 {
-    public class TaskModel:ITaskModel
+    public class TaskModel : ITaskModel
     {
         public int Id { get; set; }
         public string? Title { get; set; }
@@ -13,7 +13,8 @@ namespace SortExtensionTest.DefaultSortPropertyExample
 
         public override string ToString()
         {
-            return $"On {CreateDate.ToShortDateString()} a task called {Title} was created ";
+            return $"{CreateDate.ToShortDateString(),-20}" +
+                   $"{Title}";
         }
     }
 }

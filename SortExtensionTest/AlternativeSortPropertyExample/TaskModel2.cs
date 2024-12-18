@@ -17,12 +17,16 @@ namespace SortExtensionTest.AlternativeSortPropertyExample
         public string? DueDateString => DueDate.ToUserFriendlyDate();
 
 
-        [JsonIgnore] public DateTime CreateDate { get; set; }
-        [JsonIgnore] public DateTime DueDate { get; set; }
+        //[JsonIgnore] 
+        public DateTime CreateDate { get; set; }
+       //[JsonIgnore] 
+        public DateTime DueDate { get; set; }
 
         public override string ToString()
         {
-            return $"Task Title = {Title}\nCreated on {CreateDateString} and done on {DueDateString}";
+            return $"Create on {CreateDateString,-20}" +
+                   $"Due on {DueDateString,-20}" +
+                   $"{Title}";
         }
     }
 }

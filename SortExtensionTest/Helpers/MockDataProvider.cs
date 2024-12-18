@@ -13,6 +13,14 @@ namespace SortExtensionTest.Helpers
             return dataList.AsQueryable();
         }
 
+        internal static void PrintCollection<T>(List<T> collection) where T : ITaskModel
+        {
+            foreach (var taskModel in collection)
+            {
+                Console.WriteLine(taskModel.ToString());
+            }
+        }
+
         private static string FilesPath()
         {
             var appPath = Directory.GetCurrentDirectory();

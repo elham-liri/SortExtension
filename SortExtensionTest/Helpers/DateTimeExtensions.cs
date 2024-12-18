@@ -12,7 +12,6 @@
             switch (dateTime.Month)
             {
                 case 1:
-                case1:
                     return "Jan.";
                 case 2:
                     return "Feb.";

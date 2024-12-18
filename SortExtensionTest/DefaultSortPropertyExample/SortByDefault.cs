@@ -6,7 +6,7 @@ namespace SortExtensionTest.DefaultSortPropertyExample
 {
     public class SortByDefault
     {
-        private string DataFileName => "MOCK_DATA_Task.json";
+        private string DataFileName => "MOCK_DATA_Task1.json";
 
         public List<TaskModel> SortTasksByDefault()
         {
