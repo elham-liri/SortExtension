@@ -53,6 +53,10 @@ IQueryable<T> OrderBy<T>(this IQueryable<T> source)where T : class
  var orderedCollection=collection.OrderBy().ToList();
  ```
 
+ 
+### Attributes
+These are attributes to mark properties which has special conditions to be sorted by
+
 **1. [DefaultSortProperty([defaultSortDirection])]**
 
 when you mark a property with this attribute, that property becomes the default sort property for that entity and when you use orderBy extension method you can skip specifying sort property 
