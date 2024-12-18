@@ -4,8 +4,9 @@ This library provides some extension methods to help sorting collections and som
 ### Parameters
 These are possible input parameters for extesion methods
 
-1. sortProperty : name of property by which the collection should be sorted. Should be camelCase string
-2. sortDirection : direction of sort provided by following enum:
+**1. sortProperty** : name of property by which the collection should be sorted. Should be **camelCase** string
+
+**2. sortDirection** : direction of sort provided by following enum:
 
     ```
     enum SortDirection : byte
@@ -16,44 +17,43 @@ These are possible input parameters for extesion methods
     ```
  
  ### Methods
- 1. Order by given sort property and sort direction
+ **1. Order by given sort property and sort direction**
  ```
  IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,SortDirection sortDirection) where T : class
  ```
  This method adds orderBy clause to a query with given sortProperty and sortDirection considering all conditions (will be mentioned in following section).
 
- Usage: 
+  ##### Usage: 
  ```
  var orderedCollection=collection.OrderBy("propertyName", sortDirection).ToList();
  ```
- Or
+  ##### Or
  ```
  var orderedCollection=collection.OrderBy("propertyName", sortDirection).Take(24).ToList();
  ```
 
-2. Order by default sort property and given sort direction
+**2. Order by default sort property and given sort direction**
 ```
 IQueryable<T> OrderBy<T>(this IQueryable<T> source, SortDirection sortDirection)where T : class
 ```
  This method adds orderBy clause to a query with default sortProperty and given sortDirection .
 
-  Usage: 
+ ##### Usage: 
  ```
  var orderedCollection=collection.OrderBy(sortDirection).ToList();
  ```
 
- 3. Order by default sort property and default sort direction
+**3. Order by default sort property and default sort direction**
 ```
 IQueryable<T> OrderBy<T>(this IQueryable<T> source)where T : class
 ```
  This method adds orderBy clause to a query with default sortProperty and default sortDirection ;
 
-  Usage: 
+ ##### Usage: 
  ```
  var orderedCollection=collection.OrderBy().ToList();
  ```
 
- 
 ### Attributes
 These are attributes to mark properties which has special conditions to be sorted by
 
@@ -159,3 +159,7 @@ var orderedCollection1 = collection.OrderBy("assignedToUserId",SortDirectin.Desc
 //use alias name as sort property
 var orderedCollection2 = collection.OrderBy("userCode",SortDirectin.Descending).ToList;
 ```
+
+
+
+
