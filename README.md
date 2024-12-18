@@ -17,39 +17,39 @@ These are possible input parameters for extesion methods
     ```
  
  ### Methods
- **1. Order by given sort property and sort direction**
+#### 1. Order by given sort property and sort direction
  ```
  IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,SortDirection sortDirection) where T : class
  ```
  This method adds orderBy clause to a query with given sortProperty and sortDirection considering all conditions (will be mentioned in following section).
 
-  ##### Usage: 
+ Usage: 
  ```
  var orderedCollection=collection.OrderBy("propertyName", sortDirection).ToList();
  ```
-  ##### Or
+  Or
  ```
  var orderedCollection=collection.OrderBy("propertyName", sortDirection).Take(24).ToList();
  ```
 
-**2. Order by default sort property and given sort direction**
+#### 2. Order by default sort property and given sort direction
 ```
 IQueryable<T> OrderBy<T>(this IQueryable<T> source, SortDirection sortDirection)where T : class
 ```
  This method adds orderBy clause to a query with default sortProperty and given sortDirection .
 
- ##### Usage: 
+ Usage: 
  ```
  var orderedCollection=collection.OrderBy(sortDirection).ToList();
  ```
 
-**3. Order by default sort property and default sort direction**
+#### 3. Order by default sort property and default sort direction
 ```
 IQueryable<T> OrderBy<T>(this IQueryable<T> source)where T : class
 ```
  This method adds orderBy clause to a query with default sortProperty and default sortDirection ;
 
- ##### Usage: 
+Usage: 
  ```
  var orderedCollection=collection.OrderBy().ToList();
  ```
@@ -57,7 +57,7 @@ IQueryable<T> OrderBy<T>(this IQueryable<T> source)where T : class
 ### Attributes
 These are attributes to mark properties which has special conditions to be sorted by
 
-**1. [DefaultSortProperty([defaultSortDirection])]**
+#### 1. [DefaultSortProperty([defaultSortDirection])]
 
 when you mark a property with this attribute, that property becomes the default sort property for that entity and when you use orderBy extension method you can skip specifying sort property 
     
@@ -98,7 +98,7 @@ var orderedCollection = collection.OrderBy().Take(20).ToList;
 ```
 
 
-**2. [AlternativeSortProperty("alternativePropertyName")]**
+#### 2. [AlternativeSortProperty("alternativePropertyName")]
 
 You mark a property with this attribute to tell the orderBy method that  if this property is given as the "sortProperty", which property it should use instead
 
@@ -133,7 +133,7 @@ var orderedCollection = collection.OrderBy("dueDateString",SortDirectin.Ascendin
 
 but it will be sorted by *"DueDate"* which has been determined as the alternative sort property.
 
-**3. [AliasSortProperty("aliasName")]**
+#### 3. [AliasSortProperty("aliasName")]
 
 If there is a property which forever reason is known by different names, you can mark it with this attribute so that orderBy method can find it by alias name
 
