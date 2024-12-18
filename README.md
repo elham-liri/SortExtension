@@ -132,3 +132,30 @@ var orderedCollection = collection.OrderBy("dueDateString",SortDirectin.Ascendin
 ```
 
 but it will be sorted by *"DueDate"* which has been determined as the alternative sort property.
+
+**3. [AliasSortProperty("aliasName")]**
+
+If there is a property which forever reason is known by different names, you can mark it with this attribute so that orderBy method can find it by alias name
+
+for example:
+```
+    public class TaskModel3
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        
+        [JsonProperty("userCode")]
+        [AliasSortProperty("userCode")]
+        public int AssignedToUserId { get; set; }
+    }
+```
+
+here we have the property *"AssignedToUserId"* which is sent to frontEnd as *"userCode"* and this name is also introduced as the alias sort property so both following orderBy calls will sort the collection by *"AssignedToUserId"*
+
+```
+IQueryable<TaskModel3> collection = _database.GetCollection<TaskModel3>();
+//use real name as sort property
+var orderedCollection1 = collection.OrderBy("assignedToUserId",SortDirectin.Descending).ToList;
+//use alias name as sort property
+var orderedCollection2 = collection.OrderBy("userCode",SortDirectin.Descending).ToList;
+```
