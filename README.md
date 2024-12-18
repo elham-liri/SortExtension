@@ -53,14 +53,11 @@ IQueryable<T> OrderBy<T>(this IQueryable<T> source)where T : class
  var orderedCollection=collection.OrderBy().ToList();
  ```
 
-### Attributes
-These are attributes to mark properties which has special conditions to be sorted by
+**1. [DefaultSortProperty([defaultSortDirection])]**
 
-1. [DefaultSortProperty(string? defaultSortDirection)]
-
-    when you mark a property with this attribute, that property becomes the default sort property for that entity and when you use orderBy extension method you can skip specifying sort property 
+when you mark a property with this attribute, that property becomes the default sort property for that entity and when you use orderBy extension method you can skip specifying sort property 
     
-    You can also provide a default sort direction which makes it possible to order without mentioning sortProperty and sortDirection
+You can also provide a default sort direction which makes it possible to order without mentioning sortProperty and sortDirection
 
 example : 
 ```
@@ -95,3 +92,39 @@ now you can sort a collection of this entity like this :
 IQueryable<TaskModel> collection = _database.GetCollection<TaskModel>();
 var orderedCollection = collection.OrderBy().Take(20).ToList;
 ```
+
+
+**2. [AlternativeSortProperty("alternativePropertyName")]**
+
+You mark a property with this attribute to tell the orderBy method that  if this property is given as the "sortProperty", which property it should use instead
+
+For example :
+
+```
+    public class TaskModel2
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+
+        [AlternativeSortProperty(nameof(CreateDate))]
+        public string? CreateDateString => CreateDate.ToUserFriendlyDate();
+
+        [AlternativeSortProperty(nameof(DueDate))]
+        public string? DueDateString => DueDate.ToUserFriendlyDate();
+
+        [JsonIgnore]
+        public DateTime CreateDate { get; set; }
+        [JsonIgnore]
+        public DateTime DueDate { get; set; }
+    }
+```
+In this case we have two properties *"CreateDate"* and *"DueDate"* which hold the raw data and are not sent to the frontEnd. Also we have *"CreateDateString"* and *"DueDateString"* which provide user-friendly format of the same data.
+
+Now imagine the user chooses to sort the collection by *"DueDateString"* so this will be the given sort property
+
+```
+IQueryable<TaskModel2> collection = _database.GetCollection<TaskModel2>();
+var orderedCollection = collection.OrderBy("dueDateString",SortDirectin.Ascending).ToList;
+```
+
+but it will be sorted by *"DueDate"* which has been determined as the alternative sort property.
