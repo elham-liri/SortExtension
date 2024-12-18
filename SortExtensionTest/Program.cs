@@ -1,4 +1,5 @@
-﻿using SortExtensionTest.AlternativeSortPropertyExample;
+﻿using SortExtensionTest.AliasSortPropertyExample;
+using SortExtensionTest.AlternativeSortPropertyExample;
 using SortExtensionTest.DefaultSortPropertyExample;
 using SortExtensionTest.Helpers;
 using SortHelper.Enums;
@@ -38,6 +39,12 @@ for (; ; )
             }
         case "4":
             {
+                var sortDirection = GetSortDirection();
+                while (!sortDirection.HasValue)
+                {
+                    sortDirection = GetSortDirection();
+                }
+                SortByAlias(sortDirection.Value);
                 break;
             }
         default:
@@ -84,6 +91,13 @@ static void SortByAlternative(string sortProperty, SortDirection sortDirection)
 {
     var alternativeSorter = new SortByAlternative();
     var tasks = alternativeSorter.SortByAlternativeSortProperty(sortProperty, sortDirection);
+    MockDataProvider.PrintCollection(tasks);
+}
+
+static void SortByAlias(SortDirection sortDirection)
+{
+    var alternativeSorter = new SortByAlias();
+    var tasks = alternativeSorter.SortTasksBAssignedUser( sortDirection);
     MockDataProvider.PrintCollection(tasks);
 }
 

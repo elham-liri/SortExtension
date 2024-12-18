@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using SortExtensionTest.Helpers;
+﻿using SortExtensionTest.Helpers;
 using SortHelper.Attributes;
 
 namespace SortExtensionTest.AlternativeSortPropertyExample
@@ -16,10 +15,7 @@ namespace SortExtensionTest.AlternativeSortPropertyExample
         [AlternativeSortProperty(nameof(DueDate))]
         public string? DueDateString => DueDate.ToUserFriendlyDate();
 
-
-        //[JsonIgnore] 
         public DateTime CreateDate { get; set; }
-       //[JsonIgnore] 
         public DateTime DueDate { get; set; }
 
         public override string ToString()
