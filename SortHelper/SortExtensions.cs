@@ -84,10 +84,10 @@ namespace SortHelper
             where T : class
         {
             var tType = typeof(T);
-            var prop = tType.GetSortPropertyInfo(sortProperty);
+            var property = tType.GetSortPropertyInfo(sortProperty);
 
             var funcType = typeof(Func<,>)
-                .MakeGenericType(tType, prop.PropertyType);
+                .MakeGenericType(tType, property.PropertyType);
 
             var lambdaBuilder = typeof(Expression)
                 .GetMethods()
@@ -95,10 +95,10 @@ namespace SortHelper
                 .MakeGenericMethod(funcType);
 
             var parameter = Expression.Parameter(tType);
-            var propExpress = Expression.Property(parameter, prop);
+            var propertyExpression = Expression.Property(parameter, property);
 
             var sortLambda = lambdaBuilder
-                .Invoke(null, new object[] { propExpress, new[] { parameter } });
+                .Invoke(null, new object[] { propertyExpression, new[] { parameter } });
 
             var sortPro = typeof(Queryable)
                 .GetMethods()
@@ -108,7 +108,7 @@ namespace SortHelper
             if (sortPro != null)
             {
                 var sorter = sortPro
-                    .MakeGenericMethod(tType, prop.PropertyType);
+                    .MakeGenericMethod(tType, property.PropertyType);
 
                 return (IQueryable<T>)sorter
                     .Invoke(null, new[] { source, sortLambda });
