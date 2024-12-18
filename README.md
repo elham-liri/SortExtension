@@ -22,7 +22,7 @@ public class TaskModel
     }
 
 ```
-As you can see we send property "AssignedToUserId" out with a differnet name which is "userCode". So when user chooses to sort based on this property the sort property sent to backEnd will be "userCode" but there is no property with this name on the class so we had to hardcode it like : 
+As you can see we send property *"AssignedToUserId"* out with a differnet name which is *"userCode"*. So when user chooses to sort based on this property the sort property sent to backEnd will be **"userCode"** but there is no property with this name on the class so we had to hardcode it like : 
 
 ```
 if (filter.SortProperty == "userCode") 
@@ -30,4 +30,25 @@ if (filter.SortProperty == "userCode")
 
 ```
 
-2. 
+2. We had two properties which hold the same data with different formats (for example one contains the raw data and the other contains user-friendly format)
+
+```
+    public class TaskModel
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        public int AssignedToUserId { get; set; }
+
+        public string? CreateDateString => CreateDate.ToUserFriendlyDate();
+        public string? DueDateString => DueDate.ToUserFriendlyDate();
+
+        [JsonIgnore] 
+        public DateTime CreateDate { get; set; }
+        
+        [JsonIgnore] 
+        public DateTime DueDate { get; set; }
+    }
+```
+Here we have *"CreateDate"* and *"DueDate"* which hold the raw data and *"CreateDateString"* and *"DueDateString"* which hold the same data but in a better format to show.
+
+So when user chooses to sort based on these properties the sort property sent to backEnd will be **"CreateDateString"** or **"DueDateString"** but the data which has to be sorted is stored in other two properties .
