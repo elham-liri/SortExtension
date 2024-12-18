@@ -1,54 +1,63 @@
-In our webApi project we had to sort the collections and send it to client and we had a generic extension method for it.
+## OrderBy extension methods to sort queryable and enumerable collections 
+This library provides some extension methods to help sorting collections and some attributes to specify some conditions for sorting 
 
-In this case it is the common scenario:
+### Parameters
+These are possible input parameters for extesion methods
 
-FrontEnd offers some sorting options to user like list of columns and directions which the collection can be sort by.
+1. sortProperty : name of property by which the collection should be sorted. Should be camelCase string
+2. sortDirection : direction of sort provided by following enum:
 
-User chooses desired options (which we call SortProperty and SortDirection)
-and the collection will be reordered based on given options.
-
-Here we had scenarios where we had to change the given sort property :
-1. We had to hide the name of the property
-```    
-public class TaskModel
+    ```
+    enum SortDirection : byte
     {
-        public int Id { get; set; }
-        public string? Title { get; set; }
-        public DateTime CreateDate { get; set; }
-
-        [JsonProperty("userCode")]
-        public int AssignedToUserId { get; set; }
-        public DateTime DueDate { get; set; }
+        Ascending=0,
+        Descending=1
     }
+    ```
+ 
+ ### Methods
+ 1. Order by given sort property and sort direction
+ ```
+ IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,SortDirection sortDirection) where T : class
+ ```
+ This method adds orderBy clause to a query with given sortProperty and sortDirection considering all conditions (will be mentioned in following section).
 
+ Usage: 
+ ```
+ var orderedCollection=collection.OrderBy("propertyName", sortDirection).ToList();
+ ```
+ Or
+ ```
+ var orderedCollection=collection.OrderBy("propertyName", sortDirection).Take(24).ToList();
+ ```
+
+2. Order by default sort property and given sort direction
 ```
-As you can see we send property *"AssignedToUserId"* out with a differnet name which is *"userCode"*. So when user chooses to sort based on this property the sort property sent to backEnd will be **"userCode"** but there is no property with this name on the class so we had to hardcode it like : 
-
+IQueryable<T> OrderBy<T>(this IQueryable<T> source, SortDirection sortDirection)where T : class
 ```
-if (filter.SortProperty == "userCode") 
-    filter.SortProperty = "AssignedToUserId";
+ This method adds orderBy clause to a query with default sortProperty and given sortDirection .
 
+  Usage: 
+ ```
+ var orderedCollection=collection.OrderBy(sortDirection).ToList();
+ ```
+
+ 2. Order by default sort property and default sort direction
 ```
-
-2. We had two properties which hold the same data with different formats (for example one contains the raw data and the other contains user-friendly format)
-
+IQueryable<T> OrderBy<T>(this IQueryable<T> source)where T : class
 ```
-    public class TaskModel
-    {
-        public int Id { get; set; }
-        public string? Title { get; set; }
-        public int AssignedToUserId { get; set; }
+ This method adds orderBy clause to a query with default sortProperty and default sortDirection ;
 
-        public string? CreateDateString => CreateDate.ToUserFriendlyDate();
-        public string? DueDateString => DueDate.ToUserFriendlyDate();
+  Usage: 
+ ```
+ var orderedCollection=collection.OrderBy().ToList();
+ ```
 
-        [JsonIgnore] 
-        public DateTime CreateDate { get; set; }
-        
-        [JsonIgnore] 
-        public DateTime DueDate { get; set; }
-    }
-```
-Here we have *"CreateDate"* and *"DueDate"* which hold the raw data and *"CreateDateString"* and *"DueDateString"* which hold the same data but in a better format to show.
+### Attributes
+These are attributes to mark properties which has special conditions to be sorted by
 
-So when user chooses to sort based on these properties the sort property sent to backEnd will be **"CreateDateString"** or **"DueDateString"** but the data which has to be sorted is stored in other two properties .
+1. [DefaultSortProperty(string? defaultSortDirection)]
+
+    when you mark a property with this attribute, that property becomes the default sort property for that entity and when you use orderBy extension method you can skip specifying sort property 
+    
+    You can also provide a default sort direction which makes it possible to order without mentioning sortProperty and sortDirection
