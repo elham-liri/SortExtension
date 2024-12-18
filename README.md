@@ -61,3 +61,37 @@ These are attributes to mark properties which has special conditions to be sorte
     when you mark a property with this attribute, that property becomes the default sort property for that entity and when you use orderBy extension method you can skip specifying sort property 
     
     You can also provide a default sort direction which makes it possible to order without mentioning sortProperty and sortDirection
+
+example : 
+```
+    public class TaskModel 
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        [DefaultSortProperty]
+        public DateTime CreateDate { get; set; }
+    }
+```
+now you can sort a collection of this entity like this : 
+
+```
+IQueryable<TaskModel> collection = _database.GetCollection<TaskModel>();
+var orderedCollection = collection.OrderBy(SortDirectin.Ascending).Take(20).ToList;
+```
+OR : 
+
+```
+    public class TaskModel 
+    {
+        public int Id { get; set; }
+        public string? Title { get; set; }
+        [DefaultSortProperty(SortDirection.Descending)]
+        public DateTime CreateDate { get; set; }
+    }
+```
+now you can sort a collection of this entity like this : 
+
+```
+IQueryable<TaskModel> collection = _database.GetCollection<TaskModel>();
+var orderedCollection = collection.OrderBy().Take(20).ToList;
+```
