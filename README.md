@@ -4,43 +4,39 @@ This library provides some extension methods to help sorting collections and som
 ### Parameters
 These are possible input parameters for extesion methods
 
-**1. sortProperty** : name of property by which the collection should be sorted. Should be **camelCase** string
+**1. string sortProperty** : name of property by which the collection should be sorted. Should be **camelCase** string
 
-**2. sortDirection** : direction of sort provided by following enum:
+**2. bool descendingSort** : sort will be ascending by default but you can change it to descending by setting this parameter true
 
-    ```
-    enum SortDirection : byte
-    {
-        Ascending=0,
-        Descending=1
-    }
-    ```
  
  ### Methods
 #### 1. Order by given sort property and sort direction
  ```
- IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,SortDirection sortDirection) where T : class
+ IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,bool descendingSort) where T : class
  ```
  This method adds orderBy clause to a query with given sortProperty and sortDirection considering all conditions (will be mentioned in following section).
 
  Usage: 
  ```
- var orderedCollection=collection.OrderBy("propertyName", sortDirection).ToList();
+ var orderedCollection=collection.OrderBy("propertyName", false).ToList();
  ```
+ This will sort the collection by given property in ascending order
+
   Or
  ```
- var orderedCollection=collection.OrderBy("propertyName", sortDirection).Take(24).ToList();
+ var orderedCollection=collection.OrderBy("propertyName", true).Take(24).ToList();
  ```
+  This will sort the collection by given property in descending order 
 
 #### 2. Order by default sort property and given sort direction
 ```
-IQueryable<T> OrderBy<T>(this IQueryable<T> source, SortDirection sortDirection)where T : class
+IQueryable<T> OrderBy<T>(this IQueryable<T> source, bool descendingSort)where T : class
 ```
  This method adds orderBy clause to a query with default sortProperty and given sortDirection .
 
  Usage: 
  ```
- var orderedCollection=collection.OrderBy(sortDirection).ToList();
+ var orderedCollection=collection.OrderBy(false).ToList();
  ```
 
 #### 3. Order by default sort property and default sort direction
@@ -57,11 +53,11 @@ Usage:
 ### Attributes
 These are attributes to mark properties which has special conditions to be sorted by
 
-#### 1. [DefaultSortProperty([defaultSortDirection])]
+#### 1. [DefaultSortProperty([descendingSort])]
 
 when you mark a property with this attribute, that property becomes the default sort property for that entity and when you use orderBy extension method you can skip specifying sort property 
     
-You can also provide a default sort direction which makes it possible to order without mentioning sortProperty and sortDirection
+sort will be in ascending order by default but you can set the descendingSort=true to set the descnding order as the default sort direction for default sort property
 
 example : 
 ```
@@ -77,8 +73,11 @@ now you can sort a collection of this entity like this :
 
 ```
 IQueryable<TaskModel> collection = _database.GetCollection<TaskModel>();
-var orderedCollection = collection.OrderBy(SortDirectin.Ascending).Take(20).ToList;
+var orderedCollection = collection.OrderBy().Take(20).ToList;
 ```
+
+This will sort the collection by *"CreateDate"* in ascending order
+
 OR : 
 
 ```
@@ -86,7 +85,7 @@ OR :
     {
         public int Id { get; set; }
         public string? Title { get; set; }
-        [DefaultSortProperty(SortDirection.Descending)]
+        [DefaultSortProperty(true)]
         public DateTime CreateDate { get; set; }
     }
 ```
@@ -97,6 +96,7 @@ IQueryable<TaskModel> collection = _database.GetCollection<TaskModel>();
 var orderedCollection = collection.OrderBy().Take(20).ToList;
 ```
 
+This will sort the collection by *"CreateDate"* in descending order
 
 #### 2. [AlternativeSortProperty("alternativePropertyName")]
 
@@ -128,7 +128,7 @@ Now imagine the user chooses to sort the collection by *"DueDateString"* so this
 
 ```
 IQueryable<TaskModel2> collection = _database.GetCollection<TaskModel2>();
-var orderedCollection = collection.OrderBy("dueDateString",SortDirectin.Ascending).ToList;
+var orderedCollection = collection.OrderBy("dueDateString",false).ToList;
 ```
 
 but it will be sorted by *"DueDate"* which has been determined as the alternative sort property.
@@ -154,10 +154,10 @@ here we have the property *"AssignedToUserId"* which is sent to frontEnd as *"us
 
 ```
 IQueryable<TaskModel3> collection = _database.GetCollection<TaskModel3>();
-//use real name as sort property
-var orderedCollection1 = collection.OrderBy("assignedToUserId",SortDirectin.Descending).ToList;
-//use alias name as sort property
-var orderedCollection2 = collection.OrderBy("userCode",SortDirectin.Descending).ToList;
+//use real name as sort property and ascending order
+var orderedCollection1 = collection.OrderBy("assignedToUserId",false).ToList;
+//use alias name as sort property and descending order
+var orderedCollection2 = collection.OrderBy("userCode",true).false;
 ```
 
 
