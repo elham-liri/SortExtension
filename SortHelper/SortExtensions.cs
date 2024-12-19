@@ -41,7 +41,7 @@ namespace SortHelper
         /// </summary>
         /// <typeparam name="T">type of collection's objects</typeparam>
         /// <param name="source">the collection</param>
-        /// <param name="descendingSort"></param>
+        /// <param name="descendingSort">Should sort in descending order</param>
         /// <returns>sorted collection</returns>
         /// <exception cref="ArgumentException">thrown exception</exception>
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, bool descendingSort)
