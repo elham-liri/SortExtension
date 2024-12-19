@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using SortHelper.Attributes;
-using SortHelper.Enums;
 
 namespace SortHelper
 {
@@ -19,14 +18,14 @@ namespace SortHelper
             return type.GetPropertyByAttribute<DefaultSortProperty>()?.Name;
         }
 
-        internal static SortDirection? GetDefaultSortDirection(this Type type)
+        internal static bool IsDefaultSortDirectionDescending(this Type type)
         {
             var property = type.GetPropertyByAttribute<DefaultSortProperty>();
             var attribute
                 = Attribute.GetCustomAttribute(property, typeof(DefaultSortProperty))
                     as DefaultSortProperty;
 
-            return attribute?.DefaultSortDirection;
+            return attribute?.DescendingSort ?? false;
         }
 
         internal static string GetAliasSortProperty(this Type type, string alias)

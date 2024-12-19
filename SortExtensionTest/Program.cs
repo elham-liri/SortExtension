@@ -2,7 +2,6 @@
 using SortExtensionTest.AlternativeSortPropertyExample;
 using SortExtensionTest.DefaultSortPropertyExample;
 using SortExtensionTest.Helpers;
-using SortHelper.Enums;
 
 for (; ; )
 {
@@ -18,33 +17,21 @@ for (; ; )
             }
         case "2":
             {
-                var sortDirection = GetSortDirection();
-                while (!sortDirection.HasValue)
-                {
-                    sortDirection = GetSortDirection();
-                }
-                SortByDefault(sortDirection);
+                var isDescendingSort = IsDescendingSort();
+                SortByDefault(isDescendingSort);
                 break;
             }
         case "3":
             {
-                var sortDirection = GetSortDirection();
-                while (!sortDirection.HasValue)
-                {
-                    sortDirection = GetSortDirection();
-                }
+                var isDescendingSort = IsDescendingSort();
                 var sortProperty = GetAlternativeSortProperty();
-                SortByAlternative(sortProperty,sortDirection.Value);
+                SortByAlternative(sortProperty,isDescendingSort);
                 break;
             }
         case "4":
             {
-                var sortDirection = GetSortDirection();
-                while (!sortDirection.HasValue)
-                {
-                    sortDirection = GetSortDirection();
-                }
-                SortByAlias(sortDirection.Value);
+                var isDescendingSort = IsDescendingSort();
+                SortByAlias(isDescendingSort);
                 break;
             }
         default:
@@ -76,32 +63,32 @@ static void ShowMenu()
     Console.ForegroundColor = ConsoleColor.White;
 }
 
-static void SortByDefault(SortDirection? sortDirection = null)
+static void SortByDefault(bool? descendingSort=null)
 {
     var defaultSorter = new SortByDefault();
 
-    var tasks = sortDirection.HasValue
-        ? defaultSorter.SortTasksByDefault(sortDirection.Value)
+    var tasks = descendingSort.HasValue
+        ? defaultSorter.SortTasksByDefault(descendingSort.Value)
         : defaultSorter.SortTasksByDefault();
 
     MockDataProvider.PrintCollection(tasks);
 }
 
-static void SortByAlternative(string sortProperty, SortDirection sortDirection)
+static void SortByAlternative(string sortProperty, bool descendingSort)
 {
     var alternativeSorter = new SortByAlternative();
-    var tasks = alternativeSorter.SortByAlternativeSortProperty(sortProperty, sortDirection);
+    var tasks = alternativeSorter.SortByAlternativeSortProperty(sortProperty, descendingSort);
     MockDataProvider.PrintCollection(tasks);
 }
 
-static void SortByAlias(SortDirection sortDirection)
+static void SortByAlias(bool descendingSort)
 {
     var alternativeSorter = new SortByAlias();
-    var tasks = alternativeSorter.SortTasksBAssignedUser( sortDirection);
+    var tasks = alternativeSorter.SortTasksBAssignedUser(descendingSort);
     MockDataProvider.PrintCollection(tasks);
 }
 
-static SortDirection? GetSortDirection()
+static bool IsDescendingSort()
 {
     Console.ForegroundColor = ConsoleColor.Yellow;
     Console.WriteLine("Choose Sort Direction - Enter 1 for Ascending or 2 for Descending :");
@@ -111,9 +98,9 @@ static SortDirection? GetSortDirection()
 
     switch (sortDirectionInput)
     {
-        case "1": return SortDirection.Ascending;
-        case "2": return SortDirection.Descending;
-        default: return null;
+        case "1": return false;
+        case "2": return true;
+        default: return false;
     }
 }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using SortHelper.Enums;
 
 namespace SortHelper.Attributes
 {
@@ -11,14 +10,14 @@ namespace SortHelper.Attributes
     {
         public DefaultSortProperty()
         {
-            DefaultSortDirection = SortDirection.Ascending;
+            DescendingSort = false;
         }
 
-        public DefaultSortProperty(SortDirection sortDirection)
+        public DefaultSortProperty(bool descendingSort)
         {
-            DefaultSortDirection = sortDirection;
+            DescendingSort = descendingSort;
         }
 
-        public SortDirection DefaultSortDirection { get; }
+        public bool DescendingSort { get; }
     }
 }

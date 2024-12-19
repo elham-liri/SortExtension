@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 using System.Linq;
 using System.Reflection;
-using SortHelper.Enums;
 
 namespace SortHelper
 {
@@ -18,23 +17,23 @@ namespace SortHelper
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> source) where T : class
         {
             string sortProperty = string.Empty;
-            SortDirection? sortDirection = null;
+            bool descendingSort = false;
 
             var tType = typeof(T);
 
             if (tType.HasDefaultSortProperty())
             {
                 sortProperty = tType.GetDefaultSortProperty();
-                sortDirection = tType.GetDefaultSortDirection();
+                descendingSort = tType.IsDefaultSortDirectionDescending();
             }
 
-            var validationError = source.ValidationBeforeSort(sortProperty, sortDirection);
+            var validationError = source.ValidationBeforeSort(sortProperty);
             if (!string.IsNullOrWhiteSpace(validationError))
             {
                 throw new ArgumentException(validationError);
             }
 
-            return source.Sort(sortProperty, sortDirection.Value);
+            return source.Sort(sortProperty, descendingSort);
         }
 
         /// <summary>
@@ -42,10 +41,10 @@ namespace SortHelper
         /// </summary>
         /// <typeparam name="T">type of collection's objects</typeparam>
         /// <param name="source">the collection</param>
-        /// <param name="sortDirection">direction of sort</param>
+        /// <param name="descendingSort"></param>
         /// <returns>sorted collection</returns>
         /// <exception cref="ArgumentException">thrown exception</exception>
-        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, SortDirection sortDirection)
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, bool descendingSort)
             where T : class
         {
             string sortProperty = string.Empty;
@@ -57,30 +56,29 @@ namespace SortHelper
                 sortProperty = tType.GetDefaultSortProperty();
             }
 
-            var validationError = source.ValidationBeforeSort(sortProperty, sortDirection);
+            var validationError = source.ValidationBeforeSort(sortProperty);
             if (!string.IsNullOrWhiteSpace(validationError))
             {
                 throw new ArgumentException(validationError);
             }
 
-            return source.Sort(sortProperty, sortDirection);
+            return source.Sort(sortProperty, descendingSort);
         }
 
-        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty,
-            SortDirection sortDirection) where T : class
+        public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty
+            , bool descendingSort) where T : class
         {
-            var validationError = source.ValidationBeforeSort(sortProperty, sortDirection);
+            var validationError = source.ValidationBeforeSort(sortProperty);
             if (!string.IsNullOrWhiteSpace(validationError))
             {
                 throw new ArgumentException(validationError);
             }
 
-            return source.Sort(sortProperty, sortDirection);
+            return source.Sort(sortProperty, descendingSort);
         }
 
 
-        private static IQueryable<T> Sort<T>(this IQueryable<T> source, string sortProperty,
-            SortDirection sortDirection)
+        private static IQueryable<T> Sort<T>(this IQueryable<T> source, string sortProperty,bool descendingSort)
             where T : class
         {
             var tType = typeof(T);
@@ -103,7 +101,7 @@ namespace SortHelper
             var sortPro = typeof(Queryable)
                 .GetMethods()
                 .FirstOrDefault(
-                    x => x.Name == (sortDirection == SortDirection.Descending ? "OrderByDescending" : "OrderBy") &&
+                    x => x.Name == (descendingSort ? "OrderByDescending" : "OrderBy") &&
                          x.GetParameters().Length == 2);
             if (sortPro != null)
             {
@@ -150,20 +148,13 @@ namespace SortHelper
             return input.First().ToString().ToUpper() + string.Join("", input.Skip(1));
         }
 
-        private static string ValidationBeforeSort<T>(this IQueryable<T> source, string sortProperty,
-            SortDirection? sortDirection)
+        private static string ValidationBeforeSort<T>(this IQueryable<T> source, string sortProperty)
         {
             if (source == null)
                 return "source collection is null.";
 
-            if (string.IsNullOrWhiteSpace(sortProperty) && !sortDirection.HasValue)
-                return "sortProperty and SortDirection are not provided";
-
             if (string.IsNullOrWhiteSpace(sortProperty))
                 return "sortProperty is not provided";
-
-            if (!sortDirection.HasValue)
-                return "SortDirection is not provided";
 
             var tType = typeof(T);
             var prop = tType.GetSortPropertyInfo(sortProperty);

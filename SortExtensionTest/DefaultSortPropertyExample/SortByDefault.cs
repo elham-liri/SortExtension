@@ -1,6 +1,5 @@
 ﻿using SortExtensionTest.Helpers;
 using SortHelper;
-using SortHelper.Enums;
 
 namespace SortExtensionTest.DefaultSortPropertyExample
 {
@@ -14,10 +13,10 @@ namespace SortExtensionTest.DefaultSortPropertyExample
             return tasks.OrderBy().ToList();
         }
 
-        public List<TaskModel> SortTasksByDefault(SortDirection sortDirection)
+        public List<TaskModel> SortTasksByDefault(bool descendingSort)
         {
             var tasks = MockDataProvider.GetCollection<TaskModel>(DataFileName);
-            return tasks.OrderBy(sortDirection).ToList();
+            return tasks.OrderBy(descendingSort).ToList();
         }
     }
 }

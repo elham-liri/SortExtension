@@ -1,6 +1,4 @@
-﻿using SortExtensionTest.AlternativeSortPropertyExample;
-using SortExtensionTest.Helpers;
-using SortHelper.Enums;
+﻿using SortExtensionTest.Helpers;
 using SortHelper;
 
 namespace SortExtensionTest.AliasSortPropertyExample
@@ -9,10 +7,10 @@ namespace SortExtensionTest.AliasSortPropertyExample
     {
         private string DataFileName => "MOCK_DATA_Task1.json";
 
-        public List<TaskModel3> SortTasksBAssignedUser(SortDirection sortDirection)
+        public List<TaskModel3> SortTasksBAssignedUser(bool descendingSort)
         {
             var tasks = MockDataProvider.GetCollection<TaskModel3>(DataFileName);
-            return tasks.OrderBy("userCode", sortDirection).ToList();
+            return tasks.OrderBy("userCode", descendingSort).ToList();
         }
     }
 }
