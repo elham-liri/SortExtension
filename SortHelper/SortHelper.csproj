@@ -5,8 +5,18 @@
     <PackageId>$(AssemblyName)</PackageId>
     <Authors>Elham Liri</Authors>
     <RepositoryUrl>https://github.com/elham-liri/SortExtension</RepositoryUrl>
-    <Title>LinqSortAssistant</Title>
+    <Title>LinqSortHelper</Title>
     <Version>1.0.0</Version>
+    <Description>Add orderBy clause to linq queries based on predefined attributes</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>.Net;.Net core;linq;Queryable;Enumerable;Sort;</PackageTags>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>

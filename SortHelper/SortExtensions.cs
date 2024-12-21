@@ -65,6 +65,15 @@ namespace SortHelper
             return source.Sort(sortProperty, descendingSort);
         }
 
+        /// <summary>
+        /// Sort A collection by a given sort property and a given sort direction
+        /// </summary>
+        /// <typeparam name="T">type of collection's objects</typeparam>
+        /// <param name="source">the collection</param>
+        /// <param name="sortProperty">property to sort by</param>
+        /// <param name="descendingSort">Should sort in descending order</param>
+        /// <returns>sorted collection</returns>
+        /// <exception cref="ArgumentException">thrown exception</exception>
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> source, string sortProperty
             , bool descendingSort) where T : class
         {
